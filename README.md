@@ -8,6 +8,7 @@
 ```
 $ npm i -S upbit-api-node
 ```
+    // "start": "babel-node demo",
 
 ## Disclaimer
 ```
