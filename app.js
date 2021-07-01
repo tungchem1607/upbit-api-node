@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Setup server port
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'production1';
 
 const port = process.env.PORT || 5000;
 
@@ -14,9 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
-
-// Setup server port
-process.env.NODE_ENV = 'production';
 
 // Initialize Server Binane
 require('./demo');
