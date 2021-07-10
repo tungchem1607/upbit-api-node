@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json())
-
+require('@babel/register');
 // Initialize Server Binane
 require('./demo');
 

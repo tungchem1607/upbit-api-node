@@ -51,7 +51,7 @@ const doPush = async (message) => {
   admin.messaging().send(message)
     .then((response) => {
       // Response is a message ID string.
-      console.log('Successfully sent message:', response);
+      // console.log('Successfully sent message:', response);
     })
     .catch((error) => {
       console.log('Error sending message:', error);
@@ -95,10 +95,10 @@ const notifyCoin = async (coin) => {
           san2: 'upbit'
         },
       });
-      console.log("coinName", coinName);
+      // console.log("coinName", coinName);
       // Kiểm tra xem luồng notify người dùng đã được nhận về coin
       listUserFollow.forEach(async (user) => {
-        console.log("user", user);
+        // console.log("user", user);
         // Kiểm tra xem có token hay không
         let checkToken = await users_token.findOne({
           where: { user_id: user.id }
@@ -125,7 +125,7 @@ const notifyCoin = async (coin) => {
             );
           } else if (user.x2 != null && user.x2 <= tileThaydoi) {
             // Push
-            console.log(tileThaydoi);
+            // console.log(tileThaydoi);
             await pushNotice(
               user,
               coinName + " đã đạt kì vọng!",

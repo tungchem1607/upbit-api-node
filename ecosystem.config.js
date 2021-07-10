@@ -2,7 +2,7 @@ module.exports = {
     apps: [{
         name: 'API APP COIN Upbit',
         // exec_interpreter: "babel-node",
-        script: "./demo/index.js",
+        script: "app.js",
         // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
         args: 'one two',
         instances: 1,
