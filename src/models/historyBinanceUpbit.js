@@ -3,11 +3,12 @@
 
 module.exports = (sequelize, DataTypes) => {
     const config = sequelize.define('history_binance_upbit', {
-        "coin": DataTypes.STRING,
-        "san1": DataTypes.STRING,
-        "san2": DataTypes.STRING,
-        "date": DataTypes.STRING,
-        "created_at": DataTypes.STRING
+        id:  { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
+        coin: DataTypes.STRING,
+        san1: DataTypes.STRING,
+        san2: DataTypes.STRING,
+        date: DataTypes.STRING,
+        created_at: DataTypes.STRING
     },
         {
             timestamps: false,

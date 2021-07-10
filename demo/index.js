@@ -13,8 +13,8 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://appcoinsjula-default-rtdb.firebaseio.com"
 });
-
-const { coin_upbit, coin_binance, users, config, coinfollow, coinNotication, users_token, config_system, history_binance_upbit, notication } = require('../src/models');
+const { Op } = require("sequelize");
+const { coin_upbit, coin_binance, users, config, coinfollow, users_token, config_system, history_binance_upbit, coin_notication } = require('../src/models');
 const { getTicker, getMinCandles, getCandles, getTick, getOrderbook, getMarketList, subscribe } = upbit;
 
 function naiveRound(num, decimalPlaces = 0) {
@@ -24,24 +24,44 @@ function naiveRound(num, decimalPlaces = 0) {
 
 const pushNotice = async (user, title, content, firebaseToken, data, multi = false) => {
   try {
+    let checkNotication = await coin_notication.findOne({
+      where: {
+        title: title,
+        userId: user.id,
+        created_at: {
+          [Op.gt]: moment().add(-2, 'hours').format("YYYY-MM-DD HH:mm:ss")
+        }
+      }
+    });
     title = decode(title);
     content = decode(content);
     let message = {};
-    if (multi == true) {
-      message = {
-        tokens: firebaseToken,
-        notification: { title: title, body: content },
-        data: data,
-      };
-    } else {
-      message = {
-        token: firebaseToken,
-        notification: { title: title, body: content },
-        data: data,
-      };
-      
+    if (checkNotication == null) {
+      if (multi == true) {
+        message = {
+          tokens: firebaseToken,
+          notification: { title: title, body: content },
+          data: data,
+        };
+      } else {
+        coin_notication.create({
+          title: title,
+          msg: content,
+          data: JSON.stringify(data),
+          userId: user.id,
+          created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+          updated_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+        });
+        message = {
+          token: firebaseToken,
+          notification: { title: title, body: content },
+          data: data,
+        };
+
+      }
+      await doPush(message);
     }
-    await doPush(message);
+
   } catch (error) {
     console.log('error', error);
   }
@@ -118,7 +138,7 @@ const notifyCoin = async (coin) => {
             // Push
             await pushNotice(
               user,
-              coinName + " đã đạt kì vọng!",
+              coinName + " đã đạt mức độ kì vọng 1!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
               {}
@@ -128,7 +148,7 @@ const notifyCoin = async (coin) => {
             // console.log(tileThaydoi);
             await pushNotice(
               user,
-              coinName + " đã đạt kì vọng!",
+              coinName + " đã đạt mức độ kì vọng 2!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
               {}
@@ -137,7 +157,7 @@ const notifyCoin = async (coin) => {
             // Push
             await pushNotice(
               user,
-              coinName + " đã đạt kì vọng!",
+              coinName + " đã đạt mức độ kì vọng 3!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
               {}
@@ -177,14 +197,45 @@ const chartCoin = async (coin) => {
         code: coinName,
       },
     });
-    if(checkCoinBinance != null){
-      history_binance_upbit.create({
-        coin: coinName,
-        san1: checkCoinBinance.price,
-        san2: coin.trade_price,
-        date: moment().format("YYYYMMDD"),
-        created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-      })
+    if (checkCoinBinance != null) {
+      // kiểm tra xem history đã có chưa
+      let date = moment().format("YYYYMMDD");
+      let time = moment().format("YYYY-MM-DD HH:mm:ss");
+      let historyOne = await history_binance_upbit.findOne({
+        where: {
+          coin: coinName,
+          date: date,
+          created_at: time
+        },
+      });
+      try {
+        if (historyOne == null) {
+          history_binance_upbit.create({
+            coin: coinName,
+            san1: checkCoinBinance.price,
+            san2: coin.trade_price,
+            date: date,
+            created_at: time,
+          }).catch((err) => {
+            // console.log('error');
+          });
+        } else {
+          history_binance_upbit.update(
+            {
+              san1: checkCoinBinance.price,
+              san2: coin.trade_price
+            },
+            {
+              where: {
+                id: historyOne.id
+              }
+            })
+        }
+      } catch (error) {
+        console.log('error');
+      }
+
+
     }
   } catch (error) {
     console.log('error', error.message);

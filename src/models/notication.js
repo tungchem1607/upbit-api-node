@@ -2,12 +2,16 @@
 // const moment = require("moment");
 
 module.exports = (sequelize, DataTypes) => {
-    const config = sequelize.define('notication', {
-        "userId": DataTypes.STRING,
+    const notication = sequelize.define('coin_notication', {
         "title": DataTypes.STRING,
-        "content": DataTypes.STRING,
+        "msg": DataTypes.STRING,
         "data": DataTypes.STRING,
-        "created_at": DataTypes.STRING
+        "userId": DataTypes.STRING,
+        "status": DataTypes.STRING,
+        "target": DataTypes.STRING,
+        "response": DataTypes.STRING,
+        "created_at": DataTypes.STRING,
+        "updated_at": DataTypes.STRING
     },
         {
             timestamps: false,
@@ -24,5 +28,5 @@ module.exports = (sequelize, DataTypes) => {
 
     // mhealthBmi.sync({ force: true });
 
-    return config
+    return notication
 };
