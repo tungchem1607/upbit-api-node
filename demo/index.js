@@ -14,7 +14,7 @@ admin.initializeApp({
   databaseURL: "https://appcoinsjula-default-rtdb.firebaseio.com"
 });
 
-const { coin_upbit, coin_binance, users, config, coinfollow, coinNotication, users_token, config_system, history_binance_upbit } = require('../src/models');
+const { coin_upbit, coin_binance, users, config, coinfollow, coinNotication, users_token, config_system, history_binance_upbit, notication } = require('../src/models');
 const { getTicker, getMinCandles, getCandles, getTick, getOrderbook, getMarketList, subscribe } = upbit;
 
 function naiveRound(num, decimalPlaces = 0) {
@@ -22,7 +22,7 @@ function naiveRound(num, decimalPlaces = 0) {
   return Math.round(num * p) / p;
 }
 
-const pushNotice = async (title, content, firebaseToken, data, multi = false) => {
+const pushNotice = async (user, title, content, firebaseToken, data, multi = false) => {
   try {
     title = decode(title);
     content = decode(content);
@@ -39,6 +39,7 @@ const pushNotice = async (title, content, firebaseToken, data, multi = false) =>
         notification: { title: title, body: content },
         data: data,
       };
+      
     }
     await doPush(message);
   } catch (error) {
@@ -116,6 +117,7 @@ const notifyCoin = async (coin) => {
           if (user.x3 != null && user.x3 <= tileThaydoi) {
             // Push
             await pushNotice(
+              user,
               coinName + " đã đạt kì vọng!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
@@ -125,6 +127,7 @@ const notifyCoin = async (coin) => {
             // Push
             console.log(tileThaydoi);
             await pushNotice(
+              user,
               coinName + " đã đạt kì vọng!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
@@ -133,6 +136,7 @@ const notifyCoin = async (coin) => {
           } else if (user.x1 != null && user.x1 <= tileThaydoi) {
             // Push
             await pushNotice(
+              user,
               coinName + " đã đạt kì vọng!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
@@ -176,8 +180,8 @@ const chartCoin = async (coin) => {
     if(checkCoinBinance != null){
       history_binance_upbit.create({
         coin: coinName,
-        binance: checkCoinBinance.price,
-        upbit: coin.trade_price,
+        san1: checkCoinBinance.price,
+        san2: coin.trade_price,
         date: moment().format("YYYYMMDD"),
         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
       })

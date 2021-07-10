@@ -2,11 +2,11 @@
 // const moment = require("moment");
 
 module.exports = (sequelize, DataTypes) => {
-    const config = sequelize.define('history_binance_upbit', {
-        "coin": DataTypes.STRING,
-        "san1": DataTypes.STRING,
-        "san2": DataTypes.STRING,
-        "date": DataTypes.STRING,
+    const config = sequelize.define('notication', {
+        "userId": DataTypes.STRING,
+        "title": DataTypes.STRING,
+        "content": DataTypes.STRING,
+        "data": DataTypes.STRING,
         "created_at": DataTypes.STRING
     },
         {
