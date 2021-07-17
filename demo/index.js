@@ -71,7 +71,7 @@ const doPush = async (message) => {
   admin.messaging().send(message)
     .then((response) => {
       // Response is a message ID string.
-      // console.log('Successfully sent message:', response);
+      console.log('Successfully sent message:', response);
     })
     .catch((error) => {
       console.log('Error sending message:', error);
@@ -138,7 +138,7 @@ const notifyCoin = async (coin) => {
             // Push
             await pushNotice(
               user,
-              coinName + " đã đạt mức độ kì vọng 1!",
+              coinName + " đã đạt mức độ kì vọng 3!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
               {}
@@ -157,7 +157,7 @@ const notifyCoin = async (coin) => {
             // Push
             await pushNotice(
               user,
-              coinName + " đã đạt mức độ kì vọng 3!",
+              coinName + " đã đạt mức độ kì vọng 1!",
               "Coin " + coinName + " đã đạt được kì vọng đặt ra là: " + tileThaydoi + "%",
               checkToken.FireBase,
               {}
