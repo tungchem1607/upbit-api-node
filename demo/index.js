@@ -14,7 +14,7 @@ admin.initializeApp({
   databaseURL: "https://appcoinsjula-default-rtdb.firebaseio.com"
 });
 const { Op } = require("sequelize");
-const { coin_upbit, coin_binance, users, config, coinfollow, users_token, config_system, history_binance_upbit, coin_notication } = require('../src/models');
+const { coin_upbit, coin_binance, users, config, coinfollow, users_token, config_system, history_binance_upbit, coin_notication, history_upbit } = require('../src/models');
 const { getTicker, getMinCandles, getCandles, getTick, getOrderbook, getMarketList, subscribe } = upbit;
 
 function naiveRound(num, decimalPlaces = 0) {
@@ -244,7 +244,7 @@ const chartCoin = async (coin) => {
 }
 
 const saveCoin = async (coin) => {
-  let checkCoin = coin_upbit.findOne({
+  let checkCoin = await coin_upbit.findOne({
     where: {
       name: coin.code,
     },
@@ -252,7 +252,7 @@ const saveCoin = async (coin) => {
   if (checkCoin) {
     // Tồn tại thì update
     if (!checkCoin.create_at) {
-      coin_upbit.update(
+      await coin_upbit.update(
         {
           price: coin.trade_price,
           create_at: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -260,13 +260,25 @@ const saveCoin = async (coin) => {
         { where: { name: coin.code } }
       );
     } else {
-      coin_upbit.update(
+      await coin_upbit.update(
         {
           price: coin.trade_price,
         },
         { where: { name: coin.code } }
       );
     }
+
+    // Thêm vào history
+    await history_upbit.create({
+      type: checkCoin.type,
+      name: coin.code,
+      code: checkCoin.code,
+      openPrice: coin.opening_price,
+      highPrice: coin.high_price,
+      lowPrice: coin.low_price,
+      closePrice: coin.trade_price,
+      create_at: moment().format("YYYY-MM-DD HH:mm:ss")
+    });
   };
 }
 // notifyCoin(

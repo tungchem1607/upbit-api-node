@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // Setup server port
-process.env.NODE_ENV = 'production1';
+process.env.NODE_ENV = 'production';
 
 const port = process.env.PORT || 5000;
 
