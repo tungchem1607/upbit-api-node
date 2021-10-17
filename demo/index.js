@@ -277,6 +277,7 @@ const saveCoin = async (coin) => {
       highPrice: coin.high_price,
       lowPrice: coin.low_price,
       closePrice: coin.trade_price,
+      date: moment().format("YYYYMMDD"),
       create_at: moment().format("YYYY-MM-DD HH:mm:ss")
     });
   };
